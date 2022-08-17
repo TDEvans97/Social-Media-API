@@ -1,12 +1,16 @@
-// express
-// db from config
-// routes from routes
+const express = require("express");
+const db = require("./config/connection");
+const routes = require("./routes");
 
-// port
-// app
+const PORT = 3001;
+const app = express();
 
-// app.use for url encoded
-// app.use for express.json
-// app.use for routes
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(routes);
 
-// set up app to listen once db is open
+db.once("open", () => {
+    app.listen(PORT, () => {
+        console.log(`API server running on port ${PORT}!`);
+    });
+});
