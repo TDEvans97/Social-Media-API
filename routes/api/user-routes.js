@@ -1,4 +1,5 @@
-// router from express 
+// router from express
+const router = require("express").Router();
 
 const {
     // all of your user controllers
@@ -7,6 +8,6 @@ const {
 } =// required from controllers
 
 // set up routes
-router.route('/').get(getUsers).post(createUser)
+// router.route('/').get(getUsers).post(createUser);
 
-// export
+module.exports = router;
