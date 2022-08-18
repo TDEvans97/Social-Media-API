@@ -15,6 +15,7 @@ const thoughtSchema = new Schema(
             type: Date,
             default: dateFormat(Date.now),
             // getter method
+            // get: timestamp => dateFormat(timestamp)
         },
         username: {
             type: String,
@@ -37,7 +38,7 @@ thoughtSchema.virtual("reactionCount").get(function () {
 });
 
 // set up model
-const Thought = model("Thought", thoughtSchema);
+const Thought = model("thought", thoughtSchema);
 
 // export model
 module.exports = Thought;

@@ -1,13 +1,21 @@
-// router from express
 const router = require("express").Router();
 
 const {
-    // all of your user controllers
-    // getUsers
-    // createUser
-} =// required from controllers
+    getThoughts,
+    getSingleThought,
+    createThought,
+    updateThought,
+    deleteThought,
+    addReaction,
+    removeReaction,
+} = require("../../controllers/thoughtController");
 
-    // set up routes
-    // router.route('/').get(getUsers).post(createUser);
+router.route("/").get(getThoughts).post(createThought)
 
-    module.exports = router;
+router.route("/:thoughtId").get(getSingleThought).put(updateThought).delete(deleteThought);
+
+router.route("/:thoughtId/reactions").post(addReaction);
+
+router.route("/:thoughtId/reactions/:reactionId").delete(removeReaction);
+
+module.exports = router;
