@@ -1,37 +1,82 @@
 const { User, Thought } = require("../models");
 
 module.exports = {
-    getThoughts(req, res) { },
-    getSingleThought(req, res) { },
-    createThought(req, res) { },
-    updateThought(req, res) { },
-    deleteThought(req, res) { },
-    addReaction(req, res) { },
-    removeReaction(req, res) { },
+    getThoughts(req, res) {
+        Thought.find()
+            .then((thoughts) => res.json(thoughts))
+            .catch((err) => res.status(500).json(err))
+    },
+    getSingleThought(req, res) {
+        Thought.findOne({ _id: req.params.thoughtId })
+            .select("__v")
+            .populate("thoughts")
+            .populate("friends")
+            .then((thought) =>
+                !thought
+                    ? res.status(404).json({ message: "Failed to find a thought. No thoughts associated with this ID" })
+                    : res.json(thought)
+            )
+    },
+    createThought(req, res) {
+        Thought.create(req.body)
+            .then(({ _id }) => User.findOneAndUpdate(
+                { username: req.body.username },
+                { $addToSet: { thoughts: _id } },
+                { new: true }
+            ))
+            .then((user) =>
+                !user
+                    ? res.status(400).json({ message: "Failed to create a thought on this user ID" })
+                    : res.json(user)
+            )
+            .catch((err) => res.json(err))
+    },
+    updateThought(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $set: req.body }, 
+            { runValidators: true, new: true })
+            .then((thought) =>
+                !thought
+                    ? res.status(404).json({ message: "Failed to update thoughts. No thoughts associated with this ID" })
+                    : res.json(thought)
+            )
+            .catch((err) => res.status(500).json(err));
+    },
+    deleteThought(req, res) {
+        Thought.findOneAndDelete({ _id: req.params.thoughtId })
+            .then((thought) =>
+                !thought
+                    ? res.status(404).json({ message: "Failed to delete a thought. No thoughts associated with this ID" })
+                    : User.findOneAndUpdate({ thoughts: req.params.thoughtId }, { $pull: { thoughts: req.params.thoughtId } }, { new: true })
+            )
+            .then(() => res.json({ message: "The thought has been deleted!" }))
+            .catch((err) => res.status(500).json(err));
+    },
+    addReaction(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $addToSet: { reactions: req.body } },
+            { runValidators: true, new: true }
+        )
+            .then((thought) =>
+                !thought
+                    ? res.status(400).json({ message: "Failed to add a reaction to the thought." })
+                    : res.json(thought)
+            )
+            .catch((err) => res.status(500).json(err));
+    },
+    removeReaction(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $pull: { reactions: { _id: req.params.reactionId } } },
+            { runValidators: true, new: true }
+        )
+            .then((thought) =>
+                !thought
+                    ? res.status(400).json({ message: "Failed to remove a reaction from the thought." })
+                    : res.json(thought)
+            )
+            .catch((err) => res.status(500).json(err));
+    },
 };
-
-// get all thoughts
-// Thought.find
-
-// get single thought by id
-// Thought.findone
-
-// create a thought
-// Thought.create
-
-// update a thought
-// Thought.findOneAndUpdate
-
-// delete a thought also need to do a findOneAndUpdate on the user to remove the thought from the user's thoughts array
-// Thought.findOneAndRemove
-// also need User.findOneAndUpdate -use $pull to pull the thought from user's thought's array
-
-// add a reaction to a thought
-// Thought.findOneAndUpdate
-// use $addToSet
-
-// remove reaction from a thought
-// Thought.findOneAndUpdate
-// use $pull to pull reaction from thought's reaction array
-
-// export your thoughtController
