@@ -1,8 +1,14 @@
-// bring in your models
+const { User, Thought } = require("../models");
 
-// SET UP YOUR CONTROLLERS
-
-// get all users
+module.exports = {
+    getUsers(req, res) {},
+    getSingleUser(req, res) {},
+    createUser(req, res) { },
+    updateUser(req, res) { },
+    deleteUser(req, res) { },
+    addFriend(req, res) { },
+    removeFriend(req, res) {},
+};
 
 // User.find
 // activity 13 in server.js- reference
@@ -25,5 +31,3 @@
 
 // remove friend from friend list
 // User.findOneAndUpdate
-
-// export userController

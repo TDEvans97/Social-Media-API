@@ -1,6 +1,14 @@
-// bring in your models 
+const { User, Thought } = require("../models");
 
-// SET UP YOUR CONTROLLERS
+module.exports = {
+    getThoughts(req, res) { },
+    getSingleThought(req, res) { },
+    createThought(req, res) { },
+    updateThought(req, res) { },
+    deleteThought(req, res) { },
+    addReaction(req, res) { },
+    removeReaction(req, res) { },
+};
 
 // get all thoughts
 // Thought.find
