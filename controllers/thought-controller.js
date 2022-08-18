@@ -9,7 +9,7 @@ module.exports = {
     getSingleThought(req, res) {
         Thought.findOne({ _id: req.params.thoughtId })
             .select("__v")
-            .populate("thoughts")
+            .populate("thoughts") // path it to user.thoughts? drill in
             .populate("friends")
             .then((thought) =>
                 !thought
@@ -20,6 +20,7 @@ module.exports = {
     createThought(req, res) {
         Thought.create(req.body)
             .then(({ _id }) => User.findOneAndUpdate(
+                // Pushes the created thought's _id to the associated user's thoughts array field
                 { username: req.body.username },
                 { $addToSet: { thoughts: _id } },
                 { new: true }
